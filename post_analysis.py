@@ -27,6 +27,32 @@ def generate_category_narrative(category, count, total_posts, average_sentiment_
 
     return narratives.get(category, "This category represents a unique aspect of the autism parenting experience, showcasing diverse emotions and perspectives.")
 
+def generate_predictive_insights(category_counts, average_sentiment_scores):
+    # Identify categories with significant positive sentiment and high post counts
+    positive_focus = sorted([(category, count) for category, count in category_counts.items() if average_sentiment_scores.get(category, 0) > 0], key=lambda x: x[1], reverse=True)
+    # Predict future trends based on current data
+    if positive_focus:
+        top_positive_category, top_count = positive_focus[0]
+        predictive_text = f"With a notable focus on {top_positive_category} ({top_count} posts), showing a constructive and positive approach, the community is likely to deepen discussions in areas that promote positivity and support. This shift towards uplifting content could foster an even more supportive environment."
+    else:
+        predictive_text = "The community continues to balance a range of emotions, from challenges to triumphs. Moving forward, maintaining this balance will be key to providing comprehensive support."
+    
+    return predictive_text
+
+
+def generate_overall_summary(category_counts, sentiment_scores):
+    total_positive_posts = sum(1 for scores in sentiment_scores.values() for score in scores if score > 0)
+    total_negative_posts = sum(1 for scores in sentiment_scores.values() for score in scores if score < 0)
+    total_posts = sum(category_counts.values())
+    summary_text = (
+        "The emotional pattern analysis uncovers the rich spectrum of sentiments within the autism parenting community. "
+        f"Across {total_posts} analyzed posts, there's a dynamic interplay of joy, frustration, support, and advice-seeking, "
+        "reflecting the multifaceted nature of the autism parenting journey. "
+        f"The community's leaning towards {total_positive_posts} positive expressions underscores a foundational optimism, "
+        "while {total_negative_posts} instances of shared challenges highlight the importance of solidarity and mutual support. "
+        "This emotional diversity not only strengthens the community fabric but also ensures a broad spectrum of experiences and perspectives are valued and explored."
+    )
+    return summary_text
 
 
 def summarize_emotional_insights_html(category_counts, combined_text, sentiment_scores):
@@ -47,7 +73,21 @@ def summarize_emotional_insights_html(category_counts, combined_text, sentiment_
     
     detailed_emotion_html += "</ul>"
     
-    return detailed_emotion_html
+    # Calculate average sentiment scores for each category
+    average_sentiment_scores = {category: sum(scores) / len(scores) if scores else 0 for category, scores in sentiment_scores.items()}
+    
+    # Generate predictive insights and overall summary
+    predictive_insights = generate_predictive_insights(category_counts, average_sentiment_scores)
+    overall_summary = generate_overall_summary(category_counts, sentiment_scores)
+    
+    # Compile the complete HTML content
+    full_analysis_html = (
+        f"{detailed_emotion_html}"
+        f"<h4>Predictive Insights</h4><p>{predictive_insights}</p>"
+        f"<h4>Overall Summary</h4><p>{overall_summary}</p>"
+    )
+    
+    return full_analysis_html
 
 
 def emotional_pattern_analysis(file_path, showChart = True):
