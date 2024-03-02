@@ -85,23 +85,26 @@ def generate_summary(sentiment_counts):
 
 
 def generate_emotional_category_narrative(category, count, total_posts, average_sentiment_score):
-    sentiment_trend = "predominantly positive" if average_sentiment_score > 0 else "mostly negative"
+    sentiment_trend = "predominantly positive" if average_sentiment_score >= 0 and category != 'Negative Behavior' else "mostly negative"
     percentage_of_total = (count / total_posts) * 100
 
     narratives = {
-        'Supportive': f"Under 'Supportive', {count} posts ({percentage_of_total:.2f}%) reflect the community's backbone, offering encouragement and solidarity. Its {sentiment_trend} sentiment underscores a strong culture of upliftment and mutual support.",
-        'Empathetic': f"'Empathetic' category, with {count} posts ({percentage_of_total:.2f}%), highlights the community's ability to understand and share the feelings of others. This {sentiment_trend} sentiment demonstrates deep connections and shared experiences.",
-        'Advice': f"The 'Advice' category, including {count} posts ({percentage_of_total:.2f}%), showcases the community's collective wisdom and guidance. The {sentiment_trend} sentiment here indicates a proactive approach towards problem-solving and support.",
-        'Negative Behavior': f"With {count} posts ({percentage_of_total:.2f}%), 'Negative Behavior' candidly represents the community's challenges and conflicts. The {sentiment_trend} sentiment reveals the need for empathy and conflict resolution skills within dialogues.",
-        'Experience': f"'Experience', with {count} posts ({percentage_of_total:.2f}%), serves as a repository of personal stories and lessons learned, offering invaluable insights. The {sentiment_trend} sentiment enriches the community's knowledge base and empathy.",
-        'Curiosity': f"'Curiosity', encompassing {count} posts ({percentage_of_total:.2f}%), reflects the community's desire for learning and understanding. This {sentiment_trend} sentiment fosters a culture of inquiry and growth.",
-        'Gratitude': f"The 'Gratitude' category, with {count} posts ({percentage_of_total:.2f}%), celebrates the appreciation and thankfulness within the community. Its {sentiment_trend} sentiment strengthens communal bonds and positive interactions.",
-        'Encouragement': f"'Encouragement', including {count} posts ({percentage_of_total:.2f}%), highlights motivational messages and uplifting content. The {sentiment_trend} sentiment in this category inspires hope and resilience.",
-        'Confusion': f"With {count} posts ({percentage_of_total:.2f}%), 'Confusion' addresses the uncertainties and questions shared by community members. The {sentiment_trend} sentiment indicates the community's role in clarifying doubts and fostering understanding.",
-        'Joy': f"The 'Joy' category, featuring {count} posts ({percentage_of_total:.2f}%), encapsulates moments of happiness and celebration. This {sentiment_trend} sentiment showcases the community's capacity for joy and positive celebrations."
+        'Supportive': f"With {count} mentions ({percentage_of_total:.2f}%), the 'Supportive' category forms the community's emotional foundation, offering solace and encouragement. Its {sentiment_trend} sentiment not only fosters a culture of mutual aid but also serves as a beacon for new members seeking a safe harbor within the community.",
+        'Empathetic': f"The 'Empathetic' interactions, representing {count} posts ({percentage_of_total:.2f}%), are the threads that weave the community's social fabric, enabling members to share deeply personal experiences. This {sentiment_trend} sentiment indicates a shared journey of understanding, emphasizing the importance of empathy in building lasting connections.",
+        'Advice': f"Comprising {count} posts ({percentage_of_total:.2f}%), the 'Advice' category is a testament to the community's collective wisdom. The {sentiment_trend} sentiment here signals a proactive stance towards collaborative problem-solving, showcasing the community's commitment to uplifting each member.",
+        'Negative Behavior': f"The 'Negative Behavior' category, though comprising {count} posts ({percentage_of_total:.2f}%), serves as a crucial reminder of the challenges the community faces. The {sentiment_trend} sentiment here highlights the necessity for continuous dialogue on respectful communication and conflict resolution.",
+        'Experience': f"'Experience', with {count} contributions ({percentage_of_total:.2f}%), acts as the community's historical archive, rich with personal narratives. This {sentiment_trend} sentiment enriches the community's understanding, offering a multifaceted view of the autism parenting journey.",
+        'Curiosity': f"Encompassing {count} posts ({percentage_of_total:.2f}%), 'Curiosity' drives the community's thirst for knowledge. The {sentiment_trend} sentiment here underlines the vibrant, inquisitive nature of the community, pushing the boundaries of collective learning and understanding.",
+        'Gratitude': f"'Gratitude', seen in {count} posts ({percentage_of_total:.2f}%), reflects the heart of the community. This {sentiment_trend} sentiment underscores the profound impact of acknowledgment and appreciation in nurturing a positive, supportive environment.",
+        'Encouragement': f"'Encouragement', through {count} posts ({percentage_of_total:.2f}%), embodies the community's spirit of hope. The {sentiment_trend} sentiment in this category is a powerful force for motivation, highlighting the essential role of encouragement in overcoming obstacles.",
+        'Confusion': f"'Confusion', represented by {count} posts ({percentage_of_total:.2f}%), acknowledges the complexities faced by community members. The {sentiment_trend} sentiment serves as a call to action for clearer guidance and support, aiming to demystify the challenges of autism parenting.",
+        'Joy': f"'Joy', with {count} posts ({percentage_of_total:.2f}%), captures the community's celebratory moments. This {sentiment_trend} sentiment illuminates the joyous occasions that bond the community, celebrating milestones and achievements as collective triumphs."
     }
 
-    return narratives.get(category, f"This category, with {count} posts ({percentage_of_total:.2f}%), showcases a unique aspect of the community's emotional landscape, characterized by a {sentiment_trend} sentiment.")
+    # A default narrative for categories not explicitly listed
+    default_narrative = f"This category, representing {count} posts ({percentage_of_total:.2f}%), underscores a unique aspect of the community's emotional landscape. The presence of a {sentiment_trend} sentiment indicates its vital role in shaping the community's collective experience."
+
+    return narratives.get(category, default_narrative)
 
 def calculate_average_sentiment_for_category(category, sentiment_scores):
     """
