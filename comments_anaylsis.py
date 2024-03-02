@@ -47,6 +47,65 @@ def get_synonyms(word):
                 break
     return list(synonyms)
 
+def generate_emotional_category_narrative(category, count, total_posts, average_sentiment_score):
+    sentiment_trend = "predominantly positive" if average_sentiment_score > 0 else "mostly negative"
+    percentage_of_total = (count / total_posts) * 100
+
+    narratives = {
+        'Supportive': f"Under 'Supportive', {count} posts ({percentage_of_total:.2f}%) reflect the community's backbone, offering encouragement and solidarity. Its {sentiment_trend} sentiment underscores a strong culture of upliftment and mutual support.",
+        'Empathetic': f"'Empathetic' category, with {count} posts ({percentage_of_total:.2f}%), highlights the community's ability to understand and share the feelings of others. This {sentiment_trend} sentiment demonstrates deep connections and shared experiences.",
+        'Advice': f"The 'Advice' category, including {count} posts ({percentage_of_total:.2f}%), showcases the community's collective wisdom and guidance. The {sentiment_trend} sentiment here indicates a proactive approach towards problem-solving and support.",
+        'Negative Behavior': f"With {count} posts ({percentage_of_total:.2f}%), 'Negative Behavior' candidly represents the community's challenges and conflicts. The {sentiment_trend} sentiment reveals the need for empathy and conflict resolution skills within dialogues.",
+        'Experience': f"'Experience', with {count} posts ({percentage_of_total:.2f}%), serves as a repository of personal stories and lessons learned, offering invaluable insights. The {sentiment_trend} sentiment enriches the community's knowledge base and empathy.",
+        'Curiosity': f"'Curiosity', encompassing {count} posts ({percentage_of_total:.2f}%), reflects the community's desire for learning and understanding. This {sentiment_trend} sentiment fosters a culture of inquiry and growth.",
+        'Gratitude': f"The 'Gratitude' category, with {count} posts ({percentage_of_total:.2f}%), celebrates the appreciation and thankfulness within the community. Its {sentiment_trend} sentiment strengthens communal bonds and positive interactions.",
+        'Encouragement': f"'Encouragement', including {count} posts ({percentage_of_total:.2f}%), highlights motivational messages and uplifting content. The {sentiment_trend} sentiment in this category inspires hope and resilience.",
+        'Confusion': f"With {count} posts ({percentage_of_total:.2f}%), 'Confusion' addresses the uncertainties and questions shared by community members. The {sentiment_trend} sentiment indicates the community's role in clarifying doubts and fostering understanding.",
+        'Joy': f"The 'Joy' category, featuring {count} posts ({percentage_of_total:.2f}%), encapsulates moments of happiness and celebration. This {sentiment_trend} sentiment showcases the community's capacity for joy and positive celebrations."
+    }
+
+    return narratives.get(category, f"This category, with {count} posts ({percentage_of_total:.2f}%), showcases a unique aspect of the community's emotional landscape, characterized by a {sentiment_trend} sentiment.")
+
+def calculate_average_sentiment_for_category(category, sentiment_scores):
+    """
+    Calculate the average sentiment score for a given category.
+
+    :param category: The category for which to calculate the average sentiment score.
+    :param sentiment_scores: A dictionary with categories as keys and lists of sentiment scores as values.
+    :return: The average sentiment score for the category.
+    """
+    scores = sentiment_scores.get(category, [])
+    if not scores:
+        return 0  # Return 0 if there are no scores to avoid division by zero
+    average_score = sum(scores) / len(scores)
+    return average_score
+
+
+def summarize_comments_insights(sentiment_counts, combined_text):
+    total_posts = sum(sentiment_counts.values())
+
+    # Prepare the detailed emotion HTML content
+    detailed_emotion_html = "<ul><h4>Comments Emotional Insights</h4>"
+    for category, count in sentiment_counts.items():
+        # Assume function to calculate average sentiment score for the category
+        average_sentiment_score = calculate_average_sentiment_for_category(category, combined_text)
+        narrative = generate_emotional_category_narrative(category, count, total_posts, average_sentiment_score)
+        detailed_emotion_html += f"<li><h4>{category}:</h4><p>{narrative}</p></li>"
+    
+    detailed_emotion_html += "</ul>"
+    return detailed_emotion_html
+
+
+def generate_comments_predictive_insights(sentiment_counts):
+    # Example predictive insights based on sentiment counts
+    most_common_category = max(sentiment_counts, key=sentiment_counts.get)
+    predictive_text = f"Given the prominence of '{most_common_category}' in discussions, we foresee a continued focus on this theme. It reflects a critical area of collective interest and support within the community."
+    return predictive_text
+
+def generate_comments_summary(sentiment_counts):
+    total_posts = sum(sentiment_counts.values())
+    summary_text = f"Across {total_posts} comments, the community has showcased a rich diversity of emotional expressions. This analysis highlights the critical role of empathy, support, and shared experiences in fostering a vibrant and caring community."
+    return summary_text
 
 
 # Analysis Functions
@@ -101,22 +160,32 @@ def process_all_comment_files_advanced(directory_path, expanded_keywords, showCh
     sentiment_categories = list(expanded_keywords.keys()) + ['Neutral']
     total_sentiment_counts = {category: 0 for category in sentiment_categories}
     
+    combined_text= ""
+    
     for file_path in directory_path.glob('*.xlsx'):
         df = pd.read_excel(file_path, skiprows=4)
         sentiment_counts =  process_comments_general(df, expanded_keywords)
+        
+        combined_text = combined_text + '\n' + df[['Comment Text']].fillna('').apply(lambda x: x['Comment Text'], axis=1)
+        
         print(total_sentiment_counts, "before")
         # Add the counts from this file to the total counts
         for category, count in sentiment_counts.items():
             total_sentiment_counts[category] += count
         print(total_sentiment_counts, "after")
-        
-            
-    visualize_sentiment_counts(total_sentiment_counts, 'Overall Comments Emotional Analysis', showChart = True)
+    
+    
 
-def process_one_comment_file_advanced(file_path, expanded_keywords):
+    visualize_sentiment_counts(total_sentiment_counts, 'Overall Comments Emotional Analysis', showChart)
+    
+    # Generate insights summary with the updated call
+    insights_summary = summarize_comments_insights(total_sentiment_counts, combined_text)
+    return insights_summary
+
+def process_one_comment_file_advanced(file_path, expanded_keywords, showChart = True):
     df = pd.read_excel(file_path, skiprows=4)
     sentiment_counts = process_comments_general(df, expanded_keywords)
-    visualize_sentiment_counts(sentiment_counts, 'Single File Comments Emotional Analysis', showChart = True)
+    visualize_sentiment_counts(sentiment_counts, 'Single File Comments Emotional Analysis', showChart)
 
 
 
@@ -129,13 +198,13 @@ for category, words in original_keywords.items():
 
 def analyze_all_comment_files(directory_path, showChart = True):
     # directory_path = Path('../Input_Output/Autism_Parenting_Post_comments')
-    process_all_comment_files_advanced(directory_path, expanded_keywords, showChart = True)
-    return "emotional_comment_analysis_chart.png"
+    insights_summary = process_all_comment_files_advanced(directory_path, expanded_keywords, showChart)
+    return "emotional_comment_analysis_chart.png", insights_summary
     
 
-def analyze_one_comment_file(file_path):
+def analyze_one_comment_file(file_path, showChart = True):
     # file_path = Path('../Input_Output/Autism_Parenting_Post_comments/11lh28j.xlsx')
-    process_one_comment_file_advanced(file_path, expanded_keywords)
+    process_one_comment_file_advanced(file_path, expanded_keywords, showChart)
 
 
 

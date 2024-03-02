@@ -11,7 +11,7 @@ def generate_html_report(file_path, directory_path, report_path):
     general_post_chart, general_post_analysis_summary = general_post_anaylsis(file_path, showChart=False)
     
     emotional_pattern_chart, emotional_post_analysis_summary = emotional_pattern_analysis(file_path, showChart=False)
-    comment_analysis_chart = analyze_all_comment_files(directory_path, showChart=False)
+    comment_analysis_chart, comments_analysis_summary = analyze_all_comment_files(directory_path, showChart=False)
 
     # HTML structure
     html_content = f"""
@@ -47,7 +47,7 @@ def generate_html_report(file_path, directory_path, report_path):
         <div class="section">
             <h2>Comment Analysis</h2>
             <img src={comment_analysis_chart} alt="Comment Analysis Chart">
-            <p>Explanation of Comment Analysis here...</p>
+             <p>{comments_analysis_summary}</p>
         </div>
     </body>
     </html>
