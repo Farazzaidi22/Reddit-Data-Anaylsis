@@ -49,8 +49,8 @@ def generate_overall_summary(category_counts, sentiment_scores):
         f"Across {total_posts} analyzed posts, there's a dynamic interplay of joy, frustration, support, and advice-seeking, "
         "reflecting the multifaceted nature of the autism parenting journey. "
         f"The community's leaning towards {total_positive_posts} positive expressions underscores a foundational optimism, "
-        "while {total_negative_posts} instances of shared challenges highlight the importance of solidarity and mutual support. "
-        "This emotional diversity not only strengthens the community fabric but also ensures a broad spectrum of experiences and perspectives are valued and explored."
+        f"while {total_positive_posts} instances of shared challenges highlight the importance of solidarity and mutual support. "
+        f"This emotional diversity not only strengthens the community fabric but also ensures a broad spectrum of experiences and perspectives are valued and explored."
     )
     return summary_text
 
