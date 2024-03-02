@@ -47,6 +47,43 @@ def get_synonyms(word):
                 break
     return list(synonyms)
 
+
+def generate_predictive_insights(sentiment_counts):
+    # Find the category with the highest count
+    most_common_category = max(sentiment_counts, key=sentiment_counts.get)
+    most_common_count = sentiment_counts[most_common_category]
+    total_comments = sum(sentiment_counts.values())
+    percentage = (most_common_count / total_comments) * 100
+
+    # Adjusting the message for when the most common category is 'Neutral'
+    if most_common_category == 'Neutral':
+        predictive_text = (
+            "A significant portion of the discussions fall under the 'Neutral' category, "
+            f"making up {percentage:.2f}% of total interactions. This suggests a potential for fostering more targeted and engaging conversations. "
+            "Encouraging more specific exchanges could help in identifying areas where the community seeks more information or support."
+        )
+    else:
+        predictive_text = (
+            f"With '{most_common_category}' being a predominant theme, accounting for {percentage:.2f}% of the interactions, "
+            "it highlights the community's vested interest in this area. Such engagement signals a robust area for further development and focus, "
+            "underscoring the need for continued support and enriched discussions around '{most_common_category}'."
+        )
+    
+    return predictive_text
+
+
+
+def generate_summary(sentiment_counts):
+    total_comments = sum(sentiment_counts.values())
+    summary_text = (
+        f"An analysis of {total_comments} comments across various emotional categories reveals a vibrant community engagement. "
+        "The diversity in categories highlights a comprehensive range of expressions, from supportive and empathetic to curious and joyful, "
+        "demonstrating the community's broad spectrum of interactions."
+    )
+    return summary_text
+
+
+
 def generate_emotional_category_narrative(category, count, total_posts, average_sentiment_score):
     sentiment_trend = "predominantly positive" if average_sentiment_score > 0 else "mostly negative"
     percentage_of_total = (count / total_posts) * 100
@@ -93,7 +130,18 @@ def summarize_comments_insights(sentiment_counts, combined_text):
         detailed_emotion_html += f"<li><h4>{category}:</h4><p>{narrative}</p></li>"
     
     detailed_emotion_html += "</ul>"
-    return detailed_emotion_html
+     # Generate predictive insights and overall summary
+    predictive_insights = generate_predictive_insights(sentiment_counts)
+    overall_summary = generate_summary(sentiment_counts)
+    
+    # Compile the complete HTML content
+    full_analysis_html = (
+        f"{detailed_emotion_html}"
+        f"<h4>Predictive Insights</h4><p>{predictive_insights}</p>"
+        f"<h4>Overall Summary</h4><p>{overall_summary}</p>"
+    )
+    
+    return full_analysis_html
 
 
 def generate_comments_predictive_insights(sentiment_counts):
