@@ -130,6 +130,7 @@ for category, words in original_keywords.items():
 def analyze_all_comment_files(directory_path, showChart = True):
     # directory_path = Path('../Input_Output/Autism_Parenting_Post_comments')
     process_all_comment_files_advanced(directory_path, expanded_keywords, showChart = True)
+    return "emotional_comment_analysis_chart.png"
     
 
 def analyze_one_comment_file(file_path):

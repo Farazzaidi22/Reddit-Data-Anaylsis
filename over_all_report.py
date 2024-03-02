@@ -46,7 +46,7 @@ def generate_html_report(file_path, directory_path, report_path):
 
         <div class="section">
             <h2>Comment Analysis</h2>
-            <img src="{"emotional_comment_analysis_chart.png"}" alt="Comment Analysis Chart">
+            <img src={comment_analysis_chart} alt="Comment Analysis Chart">
             <p>Explanation of Comment Analysis here...</p>
         </div>
     </body>
