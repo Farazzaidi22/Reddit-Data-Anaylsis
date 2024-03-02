@@ -5,17 +5,44 @@ import category_keyword
 from textblob import TextBlob  # Example sentiment analysis library
 
 
+def generate_category_narrative(category, count, total_posts, average_sentiment_score):
+    # Determine sentiment trend
+    sentiment_trend = "predominantly positive" if average_sentiment_score > 0 else "mostly negative"
+    percentage_of_total = (count / total_posts) * 100
+
+    # Category-specific narratives
+    narratives = {
+        'Seeking Advice': f"Seeking advice, with {count} posts ({percentage_of_total:.2f}% of total), demonstrates the community's proactive approach to problem-solving and knowledge-sharing. The {sentiment_trend} sentiment suggests that these discussions are often hopeful, focusing on solutions and support.",
+        'Expressing Frustration': f"Expressing frustration, represented by {count} posts ({percentage_of_total:.2f}% of total), captures the difficulties and challenges within the autism parenting journey. The {sentiment_trend} sentiment indicates the emotional strain but also the community's resilience in facing these challenges.",
+        'Seeking Support': f"Seeking support, with {count} posts, emphasizes the community's need for emotional backing and understanding. This category's {sentiment_trend} sentiment reflects the warmth and solidarity found within these interactions.",
+        'Expressing Joy/Happiness': f"With {count} posts, expressing joy and happiness shines a light on the celebratory and positive moments in autism parenting. The {sentiment_trend} sentiment here is a beautiful reminder of the love and joy that permeates this community.",
+        'Sharing Success Stories/Accomplishments': f"Sharing success stories and accomplishments, through {count} posts, highlights the achievements and milestones celebrated by the community. The {sentiment_trend} sentiment in these discussions fosters motivation and inspiration among members.",
+        'Expressing Gratitude/Thankfulness': f"Expressing gratitude and thankfulness, in {count} posts, underscores the appreciation and recognition of support and kindness within the community. This category's {sentiment_trend} sentiment reinforces the positive impact of gratitude on community morale.",
+        'Seeking Empathy/Understanding': f"Seeking empathy and understanding, with {count} posts, reveals the community's desire for deeper connection and mutual understanding. The {sentiment_trend} sentiment highlights the compassionate and empathetic nature of these discussions.",
+        'Sharing Inspirational/Motivational Content': f"Sharing inspirational and motivational content, seen in {count} posts, serves as a beacon of hope and encouragement. The {sentiment_trend} sentiment in this category energizes the community, pushing forward with optimism.",
+        'Sharing Personal Experiences/Stories': f"Sharing personal experiences and stories, with {count} posts, forms the backbone of the community, offering insights into the lived experiences of autism parenting. The {sentiment_trend} sentiment here deepens the collective understanding and bonds.",
+        'Raising Awareness/Education': f"Raising awareness and education, through {count} posts, highlights the community's commitment to spreading knowledge and understanding about autism. This category's {sentiment_trend} sentiment underscores the importance of advocacy and education.",
+        'Expressing Concerns/Worries': f"Expressing concerns and worries, with {count} posts, articulates the anxieties and fears prevalent within the community. The {sentiment_trend} sentiment emphasizes the need for support and reassurance in addressing these concerns."
+    }
+
+    return narratives.get(category, "This category represents a unique aspect of the autism parenting experience, showcasing diverse emotions and perspectives.")
+
+
+
 def summarize_emotional_insights_html(category_counts, combined_text, sentiment_scores):
     total_posts = sum(category_counts.values())
 
     detailed_emotion_html = "<ul><h4>Emotional Pattern Insights</h4>"
     for category, count in category_counts.items():
         percentage = (count / total_posts) * 100
+        # Calculate the average sentiment score for the category
+        average_sentiment_score = sum(sentiment_scores[category]) / len(sentiment_scores[category]) if sentiment_scores[category] else 0
+        # Generate detailed narrative for the category
+        category_narrative = generate_category_narrative(category, count, total_posts, average_sentiment_score)
+
         detailed_emotion_html += (
             f"<li><h4>Category: {category}</h4>"
-            f"<p>This category, with <strong>{count} posts</strong> ({percentage:.2f}% of total), "
-            f"reflects a specific aspect of the autism parenting community's emotional landscape. "
-            f"Understanding these emotional patterns helps in tailoring support and resources effectively.</p></li>"
+            f"<p>{category_narrative} This makes up {percentage:.2f}% of total posts, indicating its significance within the community dialogue.</p></li>"
         )
     
     detailed_emotion_html += "</ul>"
