@@ -60,8 +60,8 @@ def generate_html_report(file_path, directory_path, report_path):
     print("HTML report generated successfully.")
 
 # Adjust paths accordingly
-file_path = '../Input_Output/autism_parenting_data_last_year.xlsx'
-directory_path = Path('../Input_Output/Autism_Parenting_Post_comments')
-report_path = 'analysis_report.html'  # Path where the HTML report will be saved
+# file_path = '../Input_Output/autism_parenting_data_last_year.xlsx'
+# directory_path = Path('../Input_Output/Autism_Parenting_Post_comments')
+# report_path = 'analysis_report.html'  # Path where the HTML report will be saved
 
-generate_html_report(file_path, directory_path, report_path)
+# generate_html_report(file_path, directory_path, report_path)
