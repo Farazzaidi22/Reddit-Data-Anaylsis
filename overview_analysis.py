@@ -182,4 +182,4 @@ def general_post_anaylsis(file_path, showChart=True):
         topic_counts, combined_text, sentiment_scores
     )
 
-    return "general_post_analysis_chart.png", insights_summary
+    return "./graphs/general_post_analysis_chart.png", insights_summary

@@ -252,7 +252,7 @@ def emotional_pattern_analysis(file_path, showChart=True):
         category_counts, combined_text, sentiment_scores
     )
 
-    return "emotional_pattern_analysis_chart.png", insights_summary
+    return "./graphs/emotional_pattern_analysis_chart.png", insights_summary
 
 
 # Call the function with the file path as an argument

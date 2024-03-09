@@ -302,7 +302,7 @@ def analyze_all_comment_files(directory_path, showChart=True):
     insights_summary = process_all_comment_files_advanced(
         directory_path, expanded_keywords, showChart
     )
-    return "emotional_comment_analysis_chart.png", insights_summary
+    return "./graphs/emotional_comment_analysis_chart.png", insights_summary
 
 
 def analyze_one_comment_file(file_path, showChart=True):
