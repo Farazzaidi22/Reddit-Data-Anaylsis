@@ -6,9 +6,9 @@ from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 
 # Reddit API credentials
-client_id =  os.environ("REDDIT_CLIENT_ID")
-client_secret =  os.environ("REDDIT_CLIENT_SECRET")
-user_agent =  os.environ("REDDIT_USER_AGENT")
+client_id =  os.environ.get("REDDIT_CLIENT_ID")
+client_secret =  os.environ.get("REDDIT_CLIENT_SECRET")
+user_agent =  os.environ.get("REDDIT_USER_AGENT")
 
 
 def get_posts_in_year(subreddit):

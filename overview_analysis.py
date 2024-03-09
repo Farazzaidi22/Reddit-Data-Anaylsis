@@ -9,14 +9,21 @@ def print_top_words(model, feature_names, n_top_words):
     topics = {}
     for topic_idx, topic in enumerate(model.components_):
         message = "Topic #%d: " % topic_idx
-        message += " ".join([feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]])
+        message += " ".join(
+            [feature_names[i] for i in topic.argsort()[: -n_top_words - 1 : -1]]
+        )
         topics[f"Topic {topic_idx}"] = message
     return topics
 
+
 def summarize_insights_html(topic_counts, combined_text, sentiment_scores):
     total_posts = sum(topic_counts.values())
-    positive_sentiment_posts = sum(1 for scores in sentiment_scores.values() for score in scores if score > 0)
-    negative_sentiment_posts = sum(1 for scores in sentiment_scores.values() for score in scores if score < 0)
+    positive_sentiment_posts = sum(
+        1 for scores in sentiment_scores.values() for score in scores if score > 0
+    )
+    negative_sentiment_posts = sum(
+        1 for scores in sentiment_scores.values() for score in scores if score < 0
+    )
 
     # Example of topic insights mapping
     topic_insights = {
@@ -24,17 +31,32 @@ def summarize_insights_html(topic_counts, combined_text, sentiment_scores):
         "Social & Family Events": "Discussions here illuminate the vibrant social interactions and familial bonds, emphasizing the importance of inclusive social environments and family support systems.",
         "General Life & Experiences": "Captures the broad spectrum of life's moments experienced by autism families, from milestones to everyday occurrences, reflecting the nuanced reality of autism parenting.",
         "Holiday & Seasonal Events": "Highlights how seasonal celebrations and holidays are uniquely experienced and adapted by autism families, fostering traditions that are both inclusive and respectful of sensory preferences.",
-        "Communication & Learning": "Focuses on the pivotal role of communication and education in autism, discussing innovative strategies and tools that facilitate learning and understanding."
+        "Communication & Learning": "Focuses on the pivotal role of communication and education in autism, discussing innovative strategies and tools that facilitate learning and understanding.",
     }
 
     detailed_discussion_html = "<h3>Detailed Topic Insights</h3>"
     for topic, count in topic_counts.items():
-        average_sentiment_score = sum(sentiment_scores[topic]) / len(sentiment_scores[topic]) if sentiment_scores[topic] else 0
-        sentiment_analysis = "predominantly positive" if average_sentiment_score > 0 else "significantly negative"
-        future_trend = "increasing interest" if count / total_posts > 0.2 else "steady but notable presence"
-        
-        topic_narrative = topic_insights.get(topic, "This topic brings a unique perspective to the autism parenting community, underscoring diverse experiences and insights.")
-        
+        average_sentiment_score = (
+            sum(sentiment_scores[topic]) / len(sentiment_scores[topic])
+            if sentiment_scores[topic]
+            else 0
+        )
+        sentiment_analysis = (
+            "predominantly positive"
+            if average_sentiment_score > 0
+            else "significantly negative"
+        )
+        future_trend = (
+            "increasing interest"
+            if count / total_posts > 0.2
+            else "steady but notable presence"
+        )
+
+        topic_narrative = topic_insights.get(
+            topic,
+            "This topic brings a unique perspective to the autism parenting community, underscoring diverse experiences and insights.",
+        )
+
         detailed_discussion_html += (
             f"<li><h4>Topic: {topic}</h4>"
             f"<p>{topic_narrative} With <strong>{count}</strong> posts showing a {sentiment_analysis} sentiment, "
@@ -66,10 +88,8 @@ def summarize_insights_html(topic_counts, combined_text, sentiment_scores):
         f"{predictive_insight_html}"
         f"{conclusion_html}"
     )
-    
+
     return summary_html
-
-
 
 
 def general_post_anaylsis(file_path, showChart=True):
@@ -77,15 +97,27 @@ def general_post_anaylsis(file_path, showChart=True):
     data = pd.read_excel(file_path)
 
     # Combine "Post Title" and "Post Text" for analysis, dropping missing values
-    combined_text = data[['Post Title', 'Post Text']].fillna('').apply(lambda x: x['Post Title'] + ' ' + x['Post Text'], axis=1)
-    combined_text = combined_text[combined_text != ' ']
+    combined_text = (
+        data[["Post Title", "Post Text"]]
+        .fillna("")
+        .apply(lambda x: x["Post Title"] + " " + x["Post Text"], axis=1)
+    )
+    combined_text = combined_text[combined_text != " "]
 
     # Text feature extraction for LDA
-    tf_vectorizer = CountVectorizer(max_df=0.95, min_df=2, max_features=1000, stop_words='english')
+    tf_vectorizer = CountVectorizer(
+        max_df=0.95, min_df=2, max_features=1000, stop_words="english"
+    )
     tf = tf_vectorizer.fit_transform(combined_text)
 
     # Fit LDA model
-    lda = LDA(n_components=5, max_iter=5, learning_method='online', learning_offset=50., random_state=0)
+    lda = LDA(
+        n_components=5,
+        max_iter=5,
+        learning_method="online",
+        learning_offset=50.0,
+        random_state=0,
+    )
     lda.fit(tf)
 
     # Assuming identification of keywords per topic for plotting
@@ -94,7 +126,13 @@ def general_post_anaylsis(file_path, showChart=True):
         "Social & Family Events": ["party", "birthday", "kids", "kiddo", "park"],
         "General Life & Experiences": ["time", "know", "feel", "day", "year"],
         "Holiday & Seasonal Events": ["santa", "milk", "christmas", "tree", "cup"],
-        "Communication & Learning": ["blue", "word", "conversation", "daughter", "language"]
+        "Communication & Learning": [
+            "blue",
+            "word",
+            "conversation",
+            "daughter",
+            "language",
+        ],
     }
 
     # Initialize topic counts
@@ -108,18 +146,20 @@ def general_post_anaylsis(file_path, showChart=True):
 
     # Plot the distribution of topics
     plt.figure(figsize=(10, 6))
-    plt.bar(topic_counts.keys(), topic_counts.values(), color='skyblue')
-    plt.xlabel('Topics')
-    plt.ylabel('Number of Posts')
-    plt.title('Distribution of Topics in Posts')
+    plt.bar(topic_counts.keys(), topic_counts.values(), color="skyblue")
+    plt.xlabel("Topics")
+    plt.ylabel("Number of Posts")
+    plt.title("Distribution of Topics in Posts")
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
-    plt.savefig('general_post_analysis_chart.png')
+    plt.savefig("./graphs/general_post_analysis_chart.png")
     if showChart:
         plt.show()
 
     # Initialize sentiment scores dictionary
-    sentiment_scores = {topic: [] for topic in topic_keywords}  # Store sentiment scores for each topic
+    sentiment_scores = {
+        topic: [] for topic in topic_keywords
+    }  # Store sentiment scores for each topic
 
     # Analyze sentiment for each post and assign to relevant topic based on keywords
     for post in combined_text:
@@ -129,13 +169,17 @@ def general_post_anaylsis(file_path, showChart=True):
                 sentiment_scores[topic].append(post_sentiment)
 
     # Convert list of sentiment scores to an average score per topic for simplicity
-    average_sentiment_scores = {topic: sum(scores)/len(scores) if scores else 0 for topic, scores in sentiment_scores.items()}
-    
+    average_sentiment_scores = {
+        topic: sum(scores) / len(scores) if scores else 0
+        for topic, scores in sentiment_scores.items()
+    }
+
     print(sentiment_scores, "sentiment_scores")
     print(average_sentiment_scores, "average_sentiment_scores")
 
-
     # Generate insights summary with the updated call
-    insights_summary = summarize_insights_html(topic_counts, combined_text, sentiment_scores)
+    insights_summary = summarize_insights_html(
+        topic_counts, combined_text, sentiment_scores
+    )
 
     return "general_post_analysis_chart.png", insights_summary

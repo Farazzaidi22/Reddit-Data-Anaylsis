@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from extract_data_reddit import save_reddit_posts
 from comments_anaylsis import analyze_all_comment_files, analyze_one_comment_file
@@ -22,6 +23,11 @@ comment_file_path = Path('../Input_Output/Autism_Parenting_Post_comments/11lh28j
 
 # Path where the HTML report will be saved
 report_path = 'analysis_report.html'
+
+# Create a pic_directory for save graph pictures if it doesn't exist
+pic_directory = "graphs"
+if not os.path.exists(pic_directory):
+    os.makedirs(pic_directory)
 
 # general topic analysis for Autism_Parenting posts (not comments)
 general_post_anaylsis(file_path)
