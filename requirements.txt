@@ -1,0 +1,9 @@
+os
+nltk
+pandas
+pathlib
+matplotlib
+praw
+openpyxl
+sklearn
+textblob
